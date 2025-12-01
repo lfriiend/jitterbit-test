@@ -1,0 +1,232 @@
+{
+	"info": {
+		"name": "Jitterbit Test API",
+		"description": "Collection completa para o teste técnico Jitterbit.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Autenticação",
+			"item": [
+				{
+					"name": "Registrar Usuário",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/auth/register",
+							"host": [
+								"localhost:3000"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Fazer Login (Gera Token Automático)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if(jsonData.token) {",
+									"    // Salva o token na variável de coleção para usar nas outras rotas",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    console.log(\"Token atualizado com sucesso: \" + jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/auth/login",
+							"host": [
+								"localhost:3000"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Pedidos",
+			"description": "Estas rotas usam o token salvo automaticamente pelo Login.",
+			"item": [
+				{
+					"name": "Criar Pedido",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroPedido\": \"v10089015vdb-01\",\n    \"valorTotal\": 10000,\n    \"dataCriacao\": \"2023-07-19T12:24:11.5299601+00:00\",\n    \"items\": [\n        {\n            \"idItem\": \"2434\",\n            \"quantidadeItem\": 1,\n            \"valorItem\": 1000\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/order",
+							"host": [
+								"localhost:3000"
+							],
+							"path": [
+								"order"
+							]
+						}
+					}
+				},
+				{
+					"name": "Listar Todos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/order/list",
+							"host": [
+								"localhost:3000"
+							],
+							"path": [
+								"order",
+								"list"
+							]
+						}
+					}
+				},
+				{
+					"name": "Obter por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/order/v10089015vdb-01",
+							"host": [
+								"localhost:3000"
+							],
+							"path": [
+								"order",
+								"v10089015vdb-01"
+							]
+						}
+					}
+				},
+				{
+					"name": "Atualizar Pedido (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroPedido\": \"v10089015vdb-01\",\n    \"valorTotal\": 15500,\n    \"dataCriacao\": \"2023-07-19T12:24:11.5299601+00:00\",\n    \"items\": [\n        {\n            \"idItem\": \"2434\",\n            \"quantidadeItem\": 5,\n            \"valorItem\": 1000\n        },\n         {\n            \"idItem\": \"9999\",\n            \"quantidadeItem\": 1,\n            \"valorItem\": 500\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/order/v10089015vdb-01",
+							"host": [
+								"localhost:3000"
+							],
+							"path": [
+								"order",
+								"v10089015vdb-01"
+							]
+						}
+					}
+				},
+				{
+					"name": "Deletar Pedido",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/order/v10089015vdb-01",
+							"host": [
+								"localhost:3000"
+							],
+							"path": [
+								"order",
+								"v10089015vdb-01"
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

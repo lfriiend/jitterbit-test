@@ -8,7 +8,6 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # AQUI: Estou usando 'root' e 'root' para garantir
       - DATABASE_URL=postgres://root:root@db:5432/produtos_db
     depends_on:
       - db
@@ -18,7 +17,6 @@ services:
     image: postgres:15-alpine
     container_name: jitterbit_db
     environment:
-      # AQUI: Tem que ser IGUAL à string acima
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: produtos_db

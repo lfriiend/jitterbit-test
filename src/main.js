@@ -1,38 +1,34 @@
 const express = require('express');
+const initDb = require('./database/initDb');
 const orderRoutes = require('./routes/orderRoutes');
-const pool = require('./database/db');
+const authRoutes = require('./routes/authRoutes');
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocs = require('./swagger.json');
 
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+// Registrando Rotas
+app.use('/auth', authRoutes);
 app.use('/order', orderRoutes);
 
-// Inicializa as tabelas ao rodar o servidor (opcional, mas útil para teste)
-const initDb = async () => {
+const start = async () => {
     try {
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS "Order" (
-                "orderId" VARCHAR(255) PRIMARY KEY,
-                "value" NUMERIC NOT NULL,
-                "creationDate" TIMESTAMP NOT NULL
-            );
-            CREATE TABLE IF NOT EXISTS "Items" (
-                "id" SERIAL PRIMARY KEY,
-                "orderId" VARCHAR(255) REFERENCES "Order"("orderId") ON DELETE CASCADE,
-                "productId" INTEGER NOT NULL,
-                "quantity" INTEGER NOT NULL,
-                "price" NUMERIC NOT NULL
-            );
-        `);
-        console.log("Tabelas SQL verificadas/criadas.");
+        console.log('🔄 Inicializando API...');
+        await initDb(); // Garante tabelas antes de abrir porta
+        
+        app.listen(PORT, () => {
+            console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+            console.log('Rotas carregadas: /auth e /order');
+        });
     } catch (error) {
-        console.error("Erro ao iniciar DB:", error);
+        console.error('Erro fatal:', error);
     }
 };
 
-initDb().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Servidor rodando em http://localhost:${PORT}`);
-    });
-});
+start();
